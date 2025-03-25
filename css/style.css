@@ -1,0 +1,233 @@
+/* 设置 HTML 和 body 元素占满整个视口 */
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* 声明流星雨动画效果相关的CSS变量 */
+:root {
+    --meteor-color-start: rgba(255, 255, 255, 1);
+    --meteor-color-end: rgba(180, 220, 255, 0.8);
+    --trail-color-start: rgba(180, 220, 255, 0);
+    --trail-color-mid: rgba(180, 220, 255, 0.6);
+    --trail-color-end: rgba(180, 220, 255, 0);
+    --meteor-start-top: -10px;
+    --meteor-end-top: 100%;
+    --animation-duration: 2.5s;
+}
+
+/* 设置父类动画容器 */
+.animation-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    opacity: 0.6;
+    transition: opacity 1s ease-in-out;
+    z-index: 1;
+}
+
+/* 设置子类流星雨容器 */
+.meteor-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    pointer-events: none;
+    opacity: 0.8;
+    z-index: 2;
+}
+
+/* 定义流星雨动画效果 */
+.meteor {
+    position: absolute;
+    top: -10px;
+    width: 2px;
+    height: 2px;
+    background-color: var(--meteor-color-start); /* 背景颜色 */
+    transform: rotate(-45deg); /* 倾斜角度 */
+    border-radius: 50%; /* 圆形 */
+    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5); /* 阴影 */
+    opacity: 0.9; /* 基础透明度 */
+    animation-name: meteorFall;
+    animation: meteorFall linear infinite; /* 动画效果 */
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+/* 流星尾迹效果 */
+.meteor::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 20%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.6) 80%, rgba(255, 255, 255, 0) 100%);
+    z-index: -1;
+    animation: trailFlicker 0.3s ease-in-out infinite alternate;
+}
+
+/* 流星下落动画 */
+@keyframes meteorFall {
+    0% {
+        top: var(--meteor-start-top);
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.7; /* 下落过程中保持可见 */
+    }
+    100% {
+        top: var(--meteor-end-top);
+        opacity: 0;
+    }
+}
+
+/* 拖尾闪烁动画 */
+@keyframes trailFlicker {
+    0% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* 设置流星动画延迟 */
+.meteor:nth-child(1) {
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.meteor:nth-child(2) {
+    left: 30%;
+    animation-delay: 2s;
+}
+
+.meteor:nth-child(3) {
+    left: 70%;
+    animation-delay: 4s;
+}
+
+/* 定义弹出框背景 */
+.popup-background {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* 定义弹出框样式 */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+/* 定义关闭按钮样式 */
+.close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* 设置背景图片 */
+.background-image {
+    background-image: url('../image/background.png');
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: blur(8px);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+}
+
+/* GIF图片播放动画全屏显示 */
+img.full-screen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
+    transition: opacity 0.5s;
+    z-index: 2;
+}
+
+/* 设置GIF图片加载时的样式 */
+img.loading {
+    filter: blur(5px);
+}
+
+/* 设置GIF图片加载完成时的样式 */
+img.loaded {
+    filter: blur(0);
+    transition: filter 0.5s;
+}
+
+/* 设置GIF图片加载失败时的样式 */
+img.error {
+    filter: blur(8px);
+    border: 2px solid #ff00008c;
+    position: relative;
+}
+
+img.error::after {
+    content: "⚠ 圖片加載失敗";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ff0000;
+    font-size: 1.2em;
+    text-shadow: 0 0 3px white;
+    background: #ffffff88;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* 设置鼠标悬停时GIF图片的样式 */
+img:hover {
+    opacity: 0.8;
+    cursor: pointer;
+    transition: opacity 0.5s;
+}
+
+.popup::after {
+    content: "🎵 点击此处控制音乐";
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 12px;
+    white-space: nowrap;
+}
